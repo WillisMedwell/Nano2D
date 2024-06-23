@@ -1,0 +1,57 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 29,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "common",
+            "description": "General settings that apply to all configurations",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
+            "name": "ninja",
+            "description": "Default config just specifying ninja.",
+            "generator": "Ninja",
+            "inherits": "common"
+        },
+        {
+            "name": "msvc",
+            "description": "Basic MSVC config.",
+            "generator": "Visual Studio 17 2022",
+            "inherits": "common",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "emscripten",
+            "description": "Emscripten web config.",
+            "inherits": "common",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER_WORKS": "true",
+                "CMAKE_CXX_COMPILER_WORKS": "true",
+                "EMSCRIPTEN": "true"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ninja",
+            "configurePreset": "ninja"
+        },
+        {
+            "name": "msvc",
+            "configurePreset": "msvc"
+        },
+        {
+            "name": "emscripten",
+            "configurePreset": "emscripten"
+        }
+    ]
+}

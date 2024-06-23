@@ -1,0 +1,63 @@
+cmake_minimum_required(VERSION 3.14)
+project(Nano2D VERSION 1.0.0 LANGUAGES CXX)
+
+option(BUILD_SHARED_LIBS ON)
+option(NANO2D_BUILD_TESTS OFF)
+set(NANO2D_BUILD_EXAMPLES ON)
+
+if(BUILD_SHARED_LIBS)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    add_library(Nano2D SHARED)
+else()
+    add_library(Nano2D STATIC)
+endif()
+
+target_compile_features(Nano2D PUBLIC cxx_std_23)
+
+# Finds/Gets external libraries.
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/deps.cmake)
+
+set(NANO2D_SOURCE_FILES "")
+    file(GLOB_RECURSE NANO2D_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+set(NANO2D_LINK_LIBRARIES glm imgui)
+    if(NOT EMSCRIPTEN)
+        list(APPEND NANO2D_LINK_LIBRARIES glfw OpenGL::GL)
+    endif()
+set(NANO2D_LINK_OPTIONS "")
+    if(EMSCRIPTEN)
+        list(APPEND NANO2D_LINK_OPTIONS -g --profiling-funcs -no-minimize-whitespace -fno-inline -sUSE_WEBGL2=1 -sUSE_GLFW=3 -sFULL_ES3=1 -sFETCH=1 -sALLOW_MEMORY_GROWTH)
+    endif()
+
+target_sources(Nano2D PRIVATE ${NANO2D_SOURCE_FILES})
+target_include_directories(Nano2D
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(Nano2D PRIVATE ${NANO2D_LINK_LIBRARIES})
+target_link_options(Nano2D PUBLIC ${NANO2D_LINK_OPTIONS})
+
+if(NANO2D_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+if(NANO2D_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
+# TODO: Double check if this is install stuff is correct.
+# install(TARGETS Nano2D
+#     EXPORT my_libTargets
+#     ARCHIVE DESTINATION lib
+#     LIBRARY DESTINATION lib
+#     RUNTIME DESTINATION bin
+# )
+# install(DIRECTORY include/ DESTINATION include)
+# install(EXPORT Nano2D
+#     FILE Nano2D.cmake
+#     NAMESPACE Nano2D::
+#     DESTINATION lib/cmake/Nano2D
+# )
