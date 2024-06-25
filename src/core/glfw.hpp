@@ -1,7 +1,6 @@
 #pragma once
 
-#include <n2d/helpers.hpp>
-#include <memory/allocator.hpp>
+#include <n2d/basics.hpp>
 
 #include <memory>
 #include <utility>
@@ -10,13 +9,13 @@ namespace n2d::core
 {
     struct glfw_config {
         n2d::str_literal window_title = str_literal("n2d app");
-        int window_width;
-        int window_height;
-        bool open_as_fullscreen;
-        memory::allocator allocator = memory::default_allocator;
+        int window_width = 400;
+        int window_height = 400;
+        bool open_as_fullscreen = false;
     };
 
     // Exists to handle GLFW setup and lifetime, not intended to be GLFW wrapper or anything. 
+
     class glfw {
         struct M {
             void* window = nullptr;
@@ -27,12 +26,12 @@ namespace n2d::core
         static auto create_impl(const glfw_config& config, void*(alloc)(size_t, void*), void*(realloc)(void* ptr, size_t size, void*), void(dealloc)(void* ptr, void*)) -> result<glfw>;
     
     public:
-        template<memory::allocator allocator = memory::default_allocator>
+        template<memory::is_static_allocator allocator = memory::default_allocator>
         static auto create(const glfw_config& config) -> result<glfw>
         {
-            auto glfw_alloc = [](size_t size, void*) -> void* { return allocator.alloc(size, alignof(max_align_t)); };
-            auto glfw_realloc = [](void* ptr, size_t size, void*) -> void* { return allocator.realloc(ptr, size, alignof(max_align_t)); };
-            auto glfw_dealloc = [](void* ptr, void*) -> void { allocator.dealloc(ptr, 0); };
+            thread_local auto glfw_alloc = [](size_t size, void*) -> void* { return allocator::alloc(size, alignof(max_align_t)); };
+            thread_local auto glfw_realloc = [](void* ptr, size_t size, void*) -> void* { return allocator::realloc(ptr, size, alignof(max_align_t)); };
+            thread_local auto glfw_dealloc = [](void* ptr, void*) -> void { allocator::dealloc(ptr); };
             return create_impl(config, glfw_alloc, glfw_realloc, glfw_dealloc);
         }
 

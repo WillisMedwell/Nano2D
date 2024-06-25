@@ -72,14 +72,59 @@ namespace n2d
         // causes UB after access after.
         [[nodiscard]] inline value_type&& pop_value() requires std::is_move_constructible_v<value_type>
         {
-            return static_cast<value_type&&>(*reinterpret_cast<value_type*>(_m.value));        
+            value_type* good_lookup_or_crash[2] = {
+                reinterpret_cast<value_type*>(_m.value),
+                nullptr
+            };
+            return static_cast<value_type&&>(*good_lookup_or_crash[_m.has_error]);        
         }
 
         [[nodiscard]] inline const value_type& pop_value() requires (std::is_copy_constructible_v<value_type> && !std::is_move_constructible_v<value_type>) 
         {
-            return static_cast<const value_type&>(*reinterpret_cast<value_type*>(_m.value));        
+            value_type* good_lookup_or_crash[2] = {
+                reinterpret_cast<value_type*>(_m.value),
+                nullptr
+            };
+            return static_cast<const value_type&>(*good_lookup_or_crash[_m.has_error]);        
         }
     };  
+}
 
+namespace n2d::memory
+{
+    template<typename allocator>
+    concept is_instance_allocator = requires(allocator a)
+    {
+        { a.alloc(size_t(1), size_t(1)) } -> std::same_as<void*>;
+        { a.realloc(nullptr, size_t(1), size_t(1)) } -> std::same_as<void*>;
+        { a.dealloc(nullptr) } -> std::same_as<void>;
+    };
+
+    template<typename allocator>
+    concept is_static_allocator = requires(allocator a) {
+        { allocator::alloc(size_t(1), size_t(1)) } -> std::same_as<void*>;
+        { allocator::realloc(nullptr, size_t(1), size_t(1)) } -> std::same_as<void*>;
+        { allocator::dealloc(nullptr) } -> std::same_as<void>;
+    };
+
+    template<typename allocator>
+    concept is_allocator = is_instance_allocator<allocator> || is_static_allocator<allocator>;
+
+    struct default_allocator {
+        static void* alloc(size_t size_bytes, size_t alignment);
+        static void* realloc(void* ptr, size_t size_bytes, size_t alignment);
+        static void dealloc(void* ptr);
+    };
+
+    struct default_deleter {
+
+        template<typename value_type>
+        void operator()(value_type* ptr ) const
+        {
+            default_allocator::dealloc(reinterpret_cast<void*>(ptr));
+        }   
+    };
+
+    static_assert(is_static_allocator<default_allocator>);
 
 }

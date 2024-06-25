@@ -1,17 +1,37 @@
-#include <n2d/app.hpp>
+#include <n2d/n2d.hpp>
 
 #include <cstdio>
+#include <cstdlib>
+
+#include <imgui.h>
+
+class basic_activity final : public n2d::activity {
+public:
+    void update(double delta_time_ms) override 
+    {
+        
+    }
+    void render() override 
+    {
+        ImGui::Begin("Debug");
+        ImGui::Text("Error, no activity has been loaded...");
+        ImGui::End();
+    }
+    bool is_running() override 
+    {
+        return false;
+    }
+};
+
 
 int main()
 {
-    auto app = n2d::app::create();
+    auto app = n2d::app::create<basic_activity>();
     if(app.has_error())
     {
         std::fprintf(stderr, "%s", *app.error());
         std::fflush(stderr);
+        std::abort();
     }
-    else {
-        std::fprintf(stdout, "finished");
-        std::fflush(stdout);
-    }
+    n2d::run_app(app.pop_value());
 }

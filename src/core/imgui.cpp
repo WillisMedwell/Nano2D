@@ -2,13 +2,19 @@
 #include "core/external_libraries.hpp"
 
 namespace n2d::core {
-    auto imgui::create(core::glfw* glfw) -> result<imgui>
+    auto imgui::create_impl(core::glfw* glfw, void*(*imgui_alloc)(size_t, void*), void(*imgui_dealloc)(void*, void*)) -> result<imgui>
     {
         IMGUI_CHECKVERSION();
         void* imgui_context = reinterpret_cast<void*>(ImGui::CreateContext());
         if(!imgui_context) {
             return result<imgui>(str_literal("Unable to initalise imgui context."));
         }
+
+        //ImGui::SetAllocatorFunctions()
+        // ImGuiMemAllocFunc func;
+        // //typedef void*   (*ImGuiMemAllocFunc)(size_t sz, void* user_data); 
+        // ImGuiMemFreeFunc free; 
+        // //typedef void    (*ImGuiMemFreeFunc)(void* ptr, void* user_data); 
 
         ImGuiIO& io = ImGui::GetIO(); 
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -40,6 +46,7 @@ namespace n2d::core {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
+
     void imgui::render() const
     {
         ImGui::EndFrame();

@@ -36,7 +36,7 @@ target_include_directories(Nano2D
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_link_libraries(Nano2D PRIVATE ${NANO2D_LINK_LIBRARIES})
+target_link_libraries(Nano2D PUBLIC ${NANO2D_LINK_LIBRARIES})
 target_link_options(Nano2D PUBLIC ${NANO2D_LINK_OPTIONS})
 
 if(NANO2D_BUILD_TESTS)
@@ -47,6 +47,12 @@ endif()
 if(NANO2D_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
+
+set_target_properties(Nano2D 
+    PROPERTIES
+        UNITY_BUILD ON
+        UNITY_BUILD_BATCH_SIZE 500
+)
 
 # TODO: Double check if this is install stuff is correct.
 # install(TARGETS Nano2D
