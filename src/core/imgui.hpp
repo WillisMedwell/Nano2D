@@ -9,6 +9,7 @@ namespace n2d::core {
             void* imgui_context = nullptr;
         } _m;
 
+        friend class result<imgui>;
         imgui(M&& m) : _m(std::move(m)) {}
 
         static auto create_impl(glfw* glfw, void*(*imgui_alloc)(size_t, void*), void(*imgui_dealloc)(void*, void*)) -> result<imgui>;

@@ -3,7 +3,6 @@
 #include "core/glfw.hpp"
 #include "core/imgui.hpp"
 #include "core/external_libraries.hpp"
-#include "memory/allocator.hpp"
 
 #include <chrono>
 
@@ -41,6 +40,9 @@ namespace n2d {
             .imgui = imgui_result.pop_value(),
             .prev_frame_time = std::chrono::high_resolution_clock::now(),
         };
+        
+        //constexpr static auto msg = str_literal("bad msvc");
+        //return result<app>(msg);
         return result<app>(members);
     }
 

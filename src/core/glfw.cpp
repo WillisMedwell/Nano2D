@@ -1,6 +1,4 @@
 #include "core/glfw.hpp"
-#include "memory/allocator.hpp"
-
 #include "core/external_libraries.hpp"
 
 namespace n2d::core {
@@ -40,7 +38,6 @@ namespace n2d::core {
                 return "#version 130";
             #endif
         }
-    
     }
 
     auto glfw::create_impl(const glfw_config& config, void*(alloc)(size_t, void*), void*(realloc)(void* ptr, size_t size, void*), void(dealloc)(void* ptr, void*)) -> result<glfw>
@@ -61,9 +58,11 @@ namespace n2d::core {
             glfwTerminate();
 
             if (!details::glfw_error_code) {
-                return result<glfw>(str_literal("GLFW failed to initialise."));
+                constexpr static auto msg = str_literal("GLFW failed to initialise.");
+                return result<glfw>(msg);
             }
-            return result<glfw>(str_literal(details::glfw_error_string));
+            constexpr static auto msg = str_literal(details::glfw_error_string); 
+            return result<glfw>(msg);
         }
 
         const char* glsl_version = details::glfw_set_window_hints_and_get_glsl_version();
@@ -83,9 +82,11 @@ namespace n2d::core {
         if (window == nullptr) {
             glfwTerminate();
             if (!details::glfw_error_code) {
-                return result<glfw>(str_literal("GLFW failed to create a window."));
+                constexpr static auto msg = str_literal("GLFW failed to create a window.");
+                return result<glfw>(msg);
             }
-            return result<glfw>(str_literal(details::glfw_error_string));
+            constexpr static auto msg = str_literal(details::glfw_error_string);
+            return result<glfw>(msg);
         }
         glfwMakeContextCurrent(window);
 

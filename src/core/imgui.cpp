@@ -7,7 +7,8 @@ namespace n2d::core {
         IMGUI_CHECKVERSION();
         void* imgui_context = reinterpret_cast<void*>(ImGui::CreateContext());
         if(!imgui_context) {
-            return result<imgui>(str_literal("Unable to initalise imgui context."));
+            constexpr static auto msg = str_literal("Unable to initalise imgui context.");
+            return result<imgui>(msg);
         }
 
         //ImGui::SetAllocatorFunctions()
@@ -15,6 +16,8 @@ namespace n2d::core {
         // //typedef void*   (*ImGuiMemAllocFunc)(size_t sz, void* user_data); 
         // ImGuiMemFreeFunc free; 
         // //typedef void    (*ImGuiMemFreeFunc)(void* ptr, void* user_data); 
+
+        ImGui::SetAllocatorFunctions(imgui_alloc, imgui_dealloc, nullptr);
 
         ImGuiIO& io = ImGui::GetIO(); 
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;

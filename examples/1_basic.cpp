@@ -13,8 +13,8 @@ public:
     }
     void render() override 
     {
-        ImGui::Begin("Debug");
-        ImGui::Text("Error, no activity has been loaded...");
+        ImGui::Begin("Basic");
+        ImGui::Text("This is the most simple app");
         ImGui::End();
     }
     bool is_running() override 

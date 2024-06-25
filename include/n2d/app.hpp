@@ -8,6 +8,7 @@ namespace n2d {
         struct M;
         M* _m;
 
+        friend class result<app>;
         app() = delete;
         app(M* m) : _m(m) {}
         static auto create_impl(n2d::activity* activity) -> result<app>;

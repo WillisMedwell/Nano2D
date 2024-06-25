@@ -18,12 +18,8 @@ else()
     CPMAddPackage("gh:glfw/glfw#${GLFW_DOWNLOAD_VERSION}")
     set_target_properties(glfw 
         PROPERTIES
-            FOLDER "wom_core_dependencies"
+            FOLDER "Nano2D_dependencies"
             UNITY_BUILD ON
-            UNITY_BUILD_BATCH_SIZE 4
+            UNITY_BUILD_BATCH_SIZE 9 
     )
-    set_source_files_properties(${GLFW_SOURCE_DIR}/src/win32_window.c PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON)
-    set_source_files_properties(${GLFW_SOURCE_DIR}/src/null_window.c PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON)
-
-    message(STATUS ${GLFW_SOURCE_DIR}/src/null_window.c)
 endif()

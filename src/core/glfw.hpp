@@ -22,6 +22,8 @@ namespace n2d::core
             const char* glsl_version = "#version 000";
         } _m;
 
+        friend class result<glfw>;
+
         glfw(M&& m) : _m(static_cast<M&&>(m)) {}
         static auto create_impl(const glfw_config& config, void*(alloc)(size_t, void*), void*(realloc)(void* ptr, size_t size, void*), void(dealloc)(void* ptr, void*)) -> result<glfw>;
     

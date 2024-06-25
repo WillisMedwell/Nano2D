@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(wom_imgui LANGUAGES CXX)
-
 # IMGUI = Immediate Mode UI
 set(IMGUI_DOWNLOAD_DIRECTORY ${CMAKE_BINARY_DIR}/_deps/imgui-src)
 if(NOT EXISTS ${IMGUI_DOWNLOAD_DIRECTORY})
@@ -82,7 +80,7 @@ target_compile_features(imgui PUBLIC cxx_std_17)
 
 set_target_properties(imgui 
     PROPERTIES
-        FOLDER "wom_core_dependencies"
+        FOLDER "Nano2D_dependencies"
         UNITY_BUILD ON
         UNITY_BUILD_BATCH_SIZE 20
 )

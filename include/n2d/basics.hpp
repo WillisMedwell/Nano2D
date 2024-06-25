@@ -37,9 +37,11 @@ namespace n2d
         result() = delete;
 
         template<typename... args_t>
-        constexpr explicit result(args_t&&... args) requires std::constructible_from<value_type, args_t...>
+        constexpr explicit result(args_t&&... args) /* requires std::constructible_from<value_type, args_t&&...> // this crashes msvc. */
             : _m { .value = { 0 }, .has_error = false } 
-            { new(_m.value) value_type(std::forward<args_t>(args)...); }
+        { 
+            new(_m.value) value_type(std::forward<args_t>(args)...); 
+        }
 
         constexpr explicit result(value_type&& value) requires std::move_constructible<value_type>
             : _m { .value = { 0 }, .has_error = false } 
